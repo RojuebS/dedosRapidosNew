@@ -57,8 +57,15 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
     }
 
-    case 'WRONG_KEY':
-      return { ...state, isFlashing: true }
+    case 'WRONG_KEY': {
+      const newLives = state.lives - 1
+      return {
+        ...state,
+        lives: newLives,
+        isFlashing: true,
+        status: newLives <= 0 ? 'gameover' : state.status,
+      }
+    }
 
     case 'FLASH_END':
       return { ...state, isFlashing: false }
