@@ -2,13 +2,15 @@ export const GAME_CONFIG = {
   INITIAL_LIVES: 3,
   INITIAL_LEVEL: 1,
   POINTS_PER_LEVEL: 4,
+  POINTS_PER_PHASE: 20,
 
-  // Base fall duration in ms (decreases each level)
+  // Base fall duration in ms (decreases each level and phase)
   BASE_FALL_DURATION: 6000,
   FALL_DURATION_MULTIPLIER: 0.999,
   FALL_DURATION_VARIANCE: 0.2, // ±20%
+  PHASE_SPEED_MULTIPLIER: 0.8, // each phase bombs fall 20% faster
 
-  // Spawn interval in ms (decreases each level)
+  // Spawn interval in ms (decreases each level and phase)
   BASE_SPAWN_INTERVAL: 800,
   SPAWN_INTERVAL_MULTIPLIER: 0.9,
 

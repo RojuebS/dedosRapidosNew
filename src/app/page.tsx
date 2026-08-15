@@ -6,23 +6,24 @@ import { GameBoard } from '@/components/game/GameBoard'
 import { StartModal } from '@/components/modals/StartModal'
 import { GameOverModal } from '@/components/modals/GameOverModal'
 import { LeaderboardModal } from '@/components/modals/LeaderboardModal'
+import { PhaseUpModal } from '@/components/modals/PhaseUpModal'
 
 type Screen = 'game' | 'leaderboard'
 
 export default function GamePage() {
-  const { state, dispatch, start, restart, pause, resume } = useGameEngine()
+  const { state, dispatch, start, restart, pause, resume, phaseUpContinue } = useGameEngine()
   const [screen, setScreen] = useState<Screen>('game')
 
   const isIdle = state.status === 'idle'
   const isGameOver = state.status === 'gameover'
   const isPaused = state.status === 'paused'
+  const isPhaseUp = state.status === 'phaseup'
 
   return (
     <main
       className="relative w-full h-screen bg-[#0a0a14] overflow-hidden"
       style={{ '--board-height': '100vh' } as React.CSSProperties}
     >
-      {/* Subtle grid background */}
       <div
         className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
@@ -35,16 +36,23 @@ export default function GamePage() {
       <GameBoard
         score={state.score}
         level={state.level}
+        phase={state.phase}
         lives={state.lives}
         bombs={state.bombs}
         isFlashing={state.isFlashing}
         isPaused={isPaused}
         dispatch={dispatch}
-        onPause={pause}
-        onResume={resume}
       />
 
       {isIdle && <StartModal onStart={start} />}
+
+      {isPhaseUp && (
+        <PhaseUpModal
+          phase={state.phase}
+          score={state.score}
+          onContinue={phaseUpContinue}
+        />
+      )}
 
       {isGameOver && screen === 'game' && (
         <GameOverModal

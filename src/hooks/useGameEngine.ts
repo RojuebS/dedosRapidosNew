@@ -17,5 +17,6 @@ export function useGameEngine() {
     restart: () => dispatch({ type: 'RESTART' }),
     pause: () => dispatch({ type: 'PAUSE' }),
     resume: () => dispatch({ type: 'RESUME' }),
+    phaseUpContinue: () => dispatch({ type: 'PHASE_UP_CONTINUE' }),
   }
 }

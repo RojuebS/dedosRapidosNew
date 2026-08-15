@@ -18,7 +18,7 @@ export function useBombSpawner(
       return
     }
 
-    const { fallDuration, spawnInterval } = computeDifficulty(state.level)
+    const { fallDuration, spawnInterval } = computeDifficulty(state.level, state.phase)
 
     intervalRef.current = setInterval(() => {
       const count = howManyToSpawn()
@@ -30,5 +30,5 @@ export function useBombSpawner(
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [state.status, state.level, dispatch])
+  }, [state.status, state.level, state.phase, dispatch])
 }

@@ -1,4 +1,4 @@
-export type GameStatus = 'idle' | 'playing' | 'paused' | 'gameover'
+export type GameStatus = 'idle' | 'playing' | 'paused' | 'phaseup' | 'gameover'
 
 export interface Bomb {
   id: string
@@ -13,6 +13,7 @@ export interface GameState {
   status: GameStatus
   score: number
   level: number
+  phase: number
   lives: number
   bombs: Bomb[]
   isFlashing: boolean
@@ -29,3 +30,4 @@ export type GameAction =
   | { type: 'BOMB_MISSED'; id: string }
   | { type: 'WRONG_KEY' }
   | { type: 'FLASH_END' }
+  | { type: 'PHASE_UP_CONTINUE' }

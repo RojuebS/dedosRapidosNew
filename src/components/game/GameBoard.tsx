@@ -8,25 +8,23 @@ import { GameHUD } from './GameHUD'
 interface GameBoardProps {
   score: number
   level: number
+  phase: number
   lives: number
   bombs: BombType[]
   isFlashing: boolean
   isPaused: boolean
   dispatch: React.Dispatch<GameAction>
-  onPause: () => void
-  onResume: () => void
 }
 
 export function GameBoard({
   score,
   level,
+  phase,
   lives,
   bombs,
   isFlashing,
   isPaused,
   dispatch,
-  onPause,
-  onResume,
 }: GameBoardProps) {
   const handleBombMissed = useCallback(
     (id: string) => dispatch({ type: 'BOMB_MISSED', id }),
@@ -44,14 +42,7 @@ export function GameBoard({
         isFlashing ? 'bg-red-900/40' : ''
       }`}
     >
-      <GameHUD
-        score={score}
-        level={level}
-        lives={lives}
-        paused={isPaused}
-        onPause={onPause}
-        onResume={onResume}
-      />
+      <GameHUD score={score} level={level} phase={phase} lives={lives} />
 
       {isPaused && (
         <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/50 backdrop-blur-sm">

@@ -1,12 +1,13 @@
 import { useReducer } from 'react'
 import { GameState, GameAction } from '@/types/game'
-import { computeLevel } from '@/services/game/difficultyEngine'
+import { computeLevel, computePhase } from '@/services/game/difficultyEngine'
 import { GAME_CONFIG } from '@/constants/game'
 
 const INITIAL_STATE: GameState = {
   status: 'idle',
   score: 0,
   level: 1,
+  phase: 1,
   lives: GAME_CONFIG.INITIAL_LIVES,
   bombs: [],
   isFlashing: false,
@@ -30,20 +31,26 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, bombs: [...state.bombs, action.bomb] }
 
     case 'EXPLODE_BOMB': {
-      // Mark bomb as exploding and add score immediately
       const newScore = state.score + state.level
+      const newPhase = computePhase(newScore)
+      const phaseUp = newPhase > state.phase
+
       return {
         ...state,
         score: newScore,
         level: computeLevel(newScore),
-        bombs: state.bombs.map((b) =>
+        phase: newPhase,
+        status: phaseUp ? 'phaseup' : state.status,
+        bombs: phaseUp ? [] : state.bombs.map((b) =>
           b.id === action.id ? { ...b, exploding: true } : b,
         ),
       }
     }
 
+    case 'PHASE_UP_CONTINUE':
+      return state.status === 'phaseup' ? { ...state, status: 'playing' } : state
+
     case 'REMOVE_BOMB':
-      // Called after explosion animation ends
       return { ...state, bombs: state.bombs.filter((b) => b.id !== action.id) }
 
     case 'BOMB_MISSED': {
