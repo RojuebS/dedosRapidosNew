@@ -18,9 +18,11 @@ export function useKeyboardInput(
       const digit = parseInt(e.key, 10)
       if (isNaN(digit) || digit < 0 || digit > 9) return
 
-      // Find the oldest non-exploding bomb matching the pressed digit
+      const now = Date.now()
+      // Find the oldest visible, non-exploding bomb matching the pressed digit.
+      // Bombs whose fall duration has elapsed are already off-screen and must not be targetable.
       const match = [...state.bombs]
-        .filter((b) => !b.exploding)
+        .filter((b) => !b.exploding && now - b.spawnedAt < b.duration)
         .sort((a, b) => a.spawnedAt - b.spawnedAt)
         .find((b) => b.digit === digit)
 
