@@ -1,8 +1,18 @@
-import { GAME_CONFIG } from '@/constants/game'
+import { GAME_CONFIG, PHASE_TABLE, MAX_BOMBS_BY_LEVEL } from '@/constants/game'
 
 export interface DifficultyParams {
   fallDuration: number
   spawnInterval: number
+}
+
+export function computeDifficulty(phase: number): DifficultyParams {
+  const index = Math.min(phase - 1, PHASE_TABLE.length - 1)
+  return { ...PHASE_TABLE[index] }
+}
+
+export function computeMaxBombs(level: number): number {
+  const capped = Math.min(level, Object.keys(MAX_BOMBS_BY_LEVEL).length)
+  return MAX_BOMBS_BY_LEVEL[capped]
 }
 
 export function computePhase(score: number): number {
@@ -12,19 +22,4 @@ export function computePhase(score: number): number {
 export function computeLevel(score: number): number {
   const scoreInPhase = score % GAME_CONFIG.POINTS_PER_PHASE
   return Math.floor(scoreInPhase / GAME_CONFIG.POINTS_PER_LEVEL) + 1
-}
-
-export function computeDifficulty(level: number, phase: number): DifficultyParams {
-  const levelSteps = level - 1
-  const phaseSteps = phase - 1
-  return {
-    fallDuration:
-      GAME_CONFIG.BASE_FALL_DURATION *
-      Math.pow(GAME_CONFIG.PHASE_SPEED_MULTIPLIER, phaseSteps) *
-      Math.pow(GAME_CONFIG.FALL_DURATION_MULTIPLIER, levelSteps),
-    spawnInterval:
-      GAME_CONFIG.BASE_SPAWN_INTERVAL *
-      Math.pow(GAME_CONFIG.PHASE_SPEED_MULTIPLIER, phaseSteps) *
-      Math.pow(GAME_CONFIG.SPAWN_INTERVAL_MULTIPLIER, levelSteps),
-  }
 }

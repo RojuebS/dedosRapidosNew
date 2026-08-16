@@ -1,28 +1,30 @@
 export const GAME_CONFIG = {
   INITIAL_LIVES: 3,
-  INITIAL_LEVEL: 1,
   POINTS_PER_LEVEL: 4,
   POINTS_PER_PHASE: 20,
 
-  // Base fall duration in ms (decreases each level and phase)
-  BASE_FALL_DURATION: 6000,
-  FALL_DURATION_MULTIPLIER: 0.999,
-  FALL_DURATION_VARIANCE: 0.2, // ±20%
-  PHASE_SPEED_MULTIPLIER: 0.8, // each phase bombs fall 20% faster
+  FALL_DURATION_VARIANCE: 0.2, // ±20% randomness per bomb
 
-  // Spawn interval in ms (decreases each level and phase)
-  BASE_SPAWN_INTERVAL: 800,
-  SPAWN_INTERVAL_MULTIPLIER: 0.9,
-
-  // Probability of spawning extra bombs per tick
-  DOUBLE_BOMB_CHANCE: 0.10,
-  TRIPLE_BOMB_CHANCE: 0.01,
-
-  // Flash duration when player makes a mistake
   FLASH_DURATION_MS: 300,
-
-  // Explosion animation duration
   EXPLODE_DURATION_MS: 500,
 } as const
+
+// Phase controls speed — one row per phase; last row repeats for phases beyond the table
+export const PHASE_TABLE = [
+  { fallDuration: 5000, spawnInterval: 900 }, // Phase 1
+  { fallDuration: 4000, spawnInterval: 750 }, // Phase 2
+  { fallDuration: 3000, spawnInterval: 600 }, // Phase 3
+  { fallDuration: 2200, spawnInterval: 480 }, // Phase 4
+  { fallDuration: 1800, spawnInterval: 400 }, // Phase 5+
+] as const
+
+// Level controls max bombs on screen simultaneously
+export const MAX_BOMBS_BY_LEVEL: Record<number, number> = {
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 4,
+  5: 5,
+}
 
 export const LEADERBOARD_SIZE = 15

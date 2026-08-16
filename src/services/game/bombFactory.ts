@@ -16,10 +16,3 @@ export function createBomb(baseFallDuration: number): Bomb {
     exploding: false,
   }
 }
-
-export function howManyToSpawn(): number {
-  const roll = Math.random()
-  if (roll < GAME_CONFIG.TRIPLE_BOMB_CHANCE) return 3
-  if (roll < GAME_CONFIG.DOUBLE_BOMB_CHANCE) return 2
-  return 1
-}
