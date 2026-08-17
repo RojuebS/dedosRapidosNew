@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { memo, useCallback, useRef } from 'react'
 import { Bomb as BombType } from '@/types/game'
 
 interface BombProps {
@@ -9,10 +9,10 @@ interface BombProps {
   onExploded: (id: string) => void
 }
 
-export function Bomb({ bomb, onMissed, onExploded }: BombProps) {
+export const Bomb = memo(function Bomb({ bomb, onMissed, onExploded }: BombProps) {
   const handledRef = useRef(false)
 
-  function handleAnimationEnd() {
+  const handleAnimationEnd = useCallback(() => {
     if (handledRef.current) return
     handledRef.current = true
     if (bomb.exploding) {
@@ -20,7 +20,7 @@ export function Bomb({ bomb, onMissed, onExploded }: BombProps) {
     } else {
       onMissed(bomb.id)
     }
-  }
+  }, [bomb.exploding, bomb.id, onExploded, onMissed])
 
   return (
     <div
@@ -50,4 +50,4 @@ export function Bomb({ bomb, onMissed, onExploded }: BombProps) {
       </div>
     </div>
   )
-}
+})

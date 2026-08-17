@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { Bomb as BombType, GameAction } from '@/types/game'
 import { Bomb } from './Bomb'
 import { GameHUD } from './GameHUD'
@@ -16,7 +16,7 @@ interface GameBoardProps {
   dispatch: React.Dispatch<GameAction>
 }
 
-export function GameBoard({
+export const GameBoard = memo(function GameBoard({
   score,
   level,
   phase,
@@ -62,4 +62,4 @@ export function GameBoard({
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-red-900/30 to-transparent pointer-events-none" />
     </div>
   )
-}
+})

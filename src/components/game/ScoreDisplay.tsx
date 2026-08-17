@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { GAME_CONFIG } from '@/constants/game'
 
 interface ScoreDisplayProps {
@@ -6,7 +7,7 @@ interface ScoreDisplayProps {
   phase: number
 }
 
-export function ScoreDisplay({ score, level, phase }: ScoreDisplayProps) {
+export const ScoreDisplay = memo(function ScoreDisplay({ score, level, phase }: ScoreDisplayProps) {
   const progress = ((score % GAME_CONFIG.POINTS_PER_PHASE) / GAME_CONFIG.POINTS_PER_PHASE) * 100
 
   return (
@@ -18,7 +19,6 @@ export function ScoreDisplay({ score, level, phase }: ScoreDisplayProps) {
         <div className="text-xs text-gray-600">·</div>
         <div className="text-xs text-purple-400 font-semibold">Fase {phase}</div>
       </div>
-      {/* Phase progress bar */}
       <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden mt-0.5">
         <div
           className="h-full bg-purple-400 rounded-full transition-all duration-300"
@@ -27,4 +27,4 @@ export function ScoreDisplay({ score, level, phase }: ScoreDisplayProps) {
       </div>
     </div>
   )
-}
+})

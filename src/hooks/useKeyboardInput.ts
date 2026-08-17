@@ -1,39 +1,38 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { GameAction, GameState } from '@/types/game'
 
 export function useKeyboardInput(
   state: GameState,
   dispatch: React.Dispatch<GameAction>,
 ) {
+  const stateRef = useRef(state)
+  stateRef.current = state
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const { status, bombs } = stateRef.current
+
       if (e.key === 'Escape' || e.key === 'Pause') {
-        if (state.status === 'playing') dispatch({ type: 'PAUSE' })
-        else if (state.status === 'paused') dispatch({ type: 'RESUME' })
+        if (status === 'playing') dispatch({ type: 'PAUSE' })
+        else if (status === 'paused') dispatch({ type: 'RESUME' })
         return
       }
 
-      if (state.status !== 'playing') return
+      if (status !== 'playing') return
 
       const digit = parseInt(e.key, 10)
       if (isNaN(digit) || digit < 0 || digit > 9) return
 
       const now = Date.now()
-      // Find the oldest visible, non-exploding bomb matching the pressed digit.
-      // Bombs whose fall duration has elapsed are already off-screen and must not be targetable.
-      const match = [...state.bombs]
+      const match = [...bombs]
         .filter((b) => !b.exploding && now - b.spawnedAt < b.duration)
         .sort((a, b) => a.spawnedAt - b.spawnedAt)
         .find((b) => b.digit === digit)
 
-      if (match) {
-        dispatch({ type: 'EXPLODE_BOMB', id: match.id })
-      } else {
-        dispatch({ type: 'WRONG_KEY' })
-      }
+      dispatch(match ? { type: 'EXPLODE_BOMB', id: match.id } : { type: 'WRONG_KEY' })
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [state.status, state.bombs, dispatch])
+  }, [dispatch])
 }
