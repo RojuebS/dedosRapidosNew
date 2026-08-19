@@ -11,6 +11,7 @@ const INITIAL_STATE: GameState = {
   lives: GAME_CONFIG.INITIAL_LIVES,
   bombs: [],
   isFlashing: false,
+  pausedAt: null,
 }
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -22,10 +23,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...INITIAL_STATE, status: 'playing' }
 
     case 'PAUSE':
-      return state.status === 'playing' ? { ...state, status: 'paused' } : state
+      if (state.status !== 'playing') return state
+      return { ...state, status: 'paused', pausedAt: Date.now() }
 
-    case 'RESUME':
-      return state.status === 'paused' ? { ...state, status: 'playing' } : state
+    case 'RESUME': {
+      if (state.status !== 'paused' || state.pausedAt === null) return state
+      const pauseDuration = Date.now() - state.pausedAt
+      return {
+        ...state,
+        status: 'playing',
+        pausedAt: null,
+        // Shift spawnedAt forward so the off-screen check stays accurate
+        bombs: state.bombs.map((b) => ({ ...b, spawnedAt: b.spawnedAt + pauseDuration })),
+      }
+    }
 
     case 'SPAWN_BOMB':
       return { ...state, bombs: [...state.bombs, action.bomb] }
@@ -54,6 +65,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, bombs: state.bombs.filter((b) => b.id !== action.id) }
 
     case 'BOMB_MISSED': {
+      if (state.status === 'paused') return state
       const newLives = state.lives - 1
       return {
         ...state,

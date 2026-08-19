@@ -5,12 +5,23 @@ import { Bomb as BombType } from '@/types/game'
 
 interface BombProps {
   bomb: BombType
+  isPaused: boolean
   onMissed: (id: string) => void
   onExploded: (id: string) => void
 }
 
-export const Bomb = memo(function Bomb({ bomb, onMissed, onExploded }: BombProps) {
+export const Bomb = memo(function Bomb({ bomb, isPaused, onMissed, onExploded }: BombProps) {
   const handledRef = useRef(false)
+  // Captured once when exploding becomes true — the Y px position at that moment
+  const explodeTopRef = useRef<number | null>(null)
+
+  if (bomb.exploding && explodeTopRef.current === null) {
+    const elapsed = Date.now() - bomb.spawnedAt
+    const progress = Math.min(elapsed / bomb.duration, 1)
+    // fall goes from -80px to window.innerHeight (matches the CSS keyframe)
+    const boardHeight = typeof window !== 'undefined' ? window.innerHeight : 800
+    explodeTopRef.current = (boardHeight + 80) * progress - 80
+  }
 
   const handleAnimationEnd = useCallback(() => {
     if (handledRef.current) return
@@ -22,16 +33,34 @@ export const Bomb = memo(function Bomb({ bomb, onMissed, onExploded }: BombProps
     }
   }, [bomb.exploding, bomb.id, onExploded, onMissed])
 
+  const playState = isPaused ? ('paused' as const) : ('running' as const)
+
+  const commonStyle = {
+    left: `${bomb.x}%`,
+    animationFillMode: 'forwards' as const,
+    animationPlayState: playState,
+  }
+
   return (
     <div
       className="absolute select-none pointer-events-none"
-      style={{
-        left: `${bomb.x}%`,
-        top: 0,
-        animation: bomb.exploding
-          ? 'explode 400ms ease-out forwards'
-          : `fall ${bomb.duration}ms linear forwards`,
-      }}
+      style={
+        bomb.exploding && explodeTopRef.current !== null
+          ? {
+              ...commonStyle,
+              top: explodeTopRef.current,
+              animationName: 'explode',
+              animationDuration: '400ms',
+              animationTimingFunction: 'ease-out',
+            }
+          : {
+              ...commonStyle,
+              top: 0,
+              animationName: 'fall',
+              animationDuration: `${bomb.duration}ms`,
+              animationTimingFunction: 'linear',
+            }
+      }
       onAnimationEnd={handleAnimationEnd}
     >
       <div

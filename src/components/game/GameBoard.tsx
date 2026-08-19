@@ -54,6 +54,7 @@ export const GameBoard = memo(function GameBoard({
         <Bomb
           key={bomb.id}
           bomb={bomb}
+          isPaused={isPaused}
           onMissed={handleBombMissed}
           onExploded={handleBombExploded}
         />

@@ -17,6 +17,7 @@ export interface GameState {
   lives: number
   bombs: Bomb[]
   isFlashing: boolean
+  pausedAt: number | null
 }
 
 export type GameAction =
